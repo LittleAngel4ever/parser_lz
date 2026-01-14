@@ -36,46 +36,36 @@ def logging(func):                                               #Decorator
         return orig
     return wrapper
 
-@logging
-def calculating_elements(driver):
-    elements = driver.find_elements(By.CLASS_NAME, value='b')
-    games = []
-    for element in elements:
-        element.get_attribute('textContent')
-        games.append(element)
-    return games
 
 @logging
 def parsing(driver):
-    games = calculating_elements(driver)
-    column = ['Game', 'Current online', 'Last day online', 'Peak online']
+    column = ['Movie name', 'Release Year', 'Duration', 'Age Limit', 'Rating']
     df = pd.DataFrame(columns = column)
     iter = 1
-    for m in range(0, 4):
-        for i in range(1, len(games)+1):
-            try:
-                game_name = driver.find_element(By.XPATH, value = f'/html/body/div[4]/div/div[2]/div[5]/div[3]/div[2]/div/table/tbody/tr[{i}]/td[3]/a').get_attribute('textContent')
-                print(game_name)
-            except:
-                game_name = None
-            try:
-                current_online = driver.find_element(By.XPATH, value = f'/html/body/div[4]/div/div[2]/div[5]/div[3]/div[2]/div/table/tbody/tr[{i}]/td[4]').get_attribute('textContent')
-            except:
-                current_online = None
-            try:
-                last_day_online = driver.find_element(By.XPATH, value = f'/html/body/div[4]/div/div[2]/div[5]/div[3]/div[2]/div/table/tbody/tr[{i}]/td[5]').get_attribute('textContent')
-            except:
-                last_day_online = None
-            try:
-                peak_online = driver.find_element(By.XPATH, value = f'/html/body/div[4]/div/div[2]/div[5]/div[3]/div[2]/div/table/tbody/tr[{i}]/td[6]').get_attribute('textContent')
-            except:
-                peak_online = None    
-            df.loc[iter] = [game_name, current_online, last_day_online, peak_online]
-            iter += 1
-        clickable_element = WebDriverWait(driver, 10).until(
-            EC.element_to_be_clickable((By.XPATH, '/html/body/div[4]/div/div[2]/div[5]/div[3]/div[3]/div[2]/div/nav/button[8]'))
-        )
-        clickable_element.click()
+    for i in range(1, 251):
+        try:
+            movie_name = driver.find_element(By.XPATH, value = f'/html/body/div[2]/main/div/div[3]/section/div/div[2]/div/ul/li[{i}]/div/div/div/div/div[2]/div[2]/a/h3').get_attribute('textContent')
+            print(movie_name)
+        except:
+            movie_name = None
+        try:
+            release_year = driver.find_element(By.XPATH, value = f'/html/body/div[2]/main/div/div[3]/section/div/div[2]/div/ul/li[{i}]/div/div/div/div/div[2]/div[3]/span[1]').get_attribute('textContent')
+        except:
+            release_year = None
+        try:
+            duration = driver.find_element(By.XPATH, value = f'/html/body/div[2]/main/div/div[3]/section/div/div[2]/div/ul/li[{i}]/div/div/div/div/div[2]/div[3]/span[2]').get_attribute('textContent')
+        except:
+            duration = None
+        try:
+            age_limit = driver.find_element(By.XPATH, value = f'/html/body/div[2]/main/div/div[3]/section/div/div[2]/div/ul/li[{i}]/div/div/div/div/div[2]/div[3]/span[3]').get_attribute('textContent')
+        except:
+            age_limit = None    
+        try:
+            rating = driver.find_element(By.XPATH, value = f'/html/body/div[2]/main/div/div[3]/section/div/div[2]/div/ul/li[{i}]/div/div/div/div/div[2]/span/div/span/span[1]').get_attribute('textContent')
+        except:
+            rating = None    
+        df.loc[iter] = [movie_name, release_year, duration, age_limit, rating]
+        iter += 1
     return df
 
 @logging
@@ -87,7 +77,7 @@ def main():
     opts.add_argument(f"user-agent=Mozilla/5.0 (Windows NT {windows_version}.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/{chrome_version}.0.0.0 Safari/537.36")
     driver.get("https://www.imdb.com/chart/top/?ref_=hm_nv_menu ")
     df = parsing(driver)
-    df.to_csv('steamdb_info.csv')
+    df.to_csv('IMDb_info.csv')
 
 if __name__ == '__main__':
     main()
