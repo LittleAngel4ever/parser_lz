@@ -1,3 +1,5 @@
+# Top 250 movies
+
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -15,7 +17,7 @@ import pandas as pd
 import os
 from datetime import datetime
 
-def logging(func):                                               #Decorator
+def logging(func):                                               
     def wrapper(*args, **kwargs):
         user_func = func
         orig = func(*args, **kwargs)
@@ -24,12 +26,12 @@ def logging(func):                                               #Decorator
         time_act = str(datetime.now().time())
         day_act =  str(datetime.now().date())
         logs = 'logs.csv'
-        if os.path.isfile(logs):                                                                                          #If csv file exists
+        if os.path.isfile(logs):                                                                                          
             file_df = pd.read_csv(logs)
             data = {'': [len(file_df)], 'User': [user_name], 'Func': [user_func_name], 'Time':[time_act], 'Date':[day_act]}
             df = pd.DataFrame(data)
             df.to_csv('logs.csv',header=False, index=False, mode='a')
-        else:                                                                                                             #If csv file doesn't exist
+        else:                                                                                                             
             data = {'User': [user_name], 'Func': [user_func_name], 'Time':[time_act], 'Date':[day_act]}
             df = pd.DataFrame(data)
             df.to_csv('logs.csv')
